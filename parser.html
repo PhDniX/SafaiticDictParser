@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="UTF-8"> 
+ <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+<body>
+	<h1>My First Web Page</h1>
+<p>My first paragraph.</p>
+
+
+<script>
+function loadXMLDoc()
+{
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+    }
+  }
+xmlhttp.open("GET","safaitic.txt",true);
+xmlhttp.send();
+}
+
+//var lines = request.responseText.split("\r\n");
+//console.log(lines)
+
+var database = [];
+//var lines = file.split("\r\n");
+//document.write(lines)
+//var sourceFile = document.getElementById(inputFile).files[0];
+//var reader = new FileReader();
+//var file = reader.readAsBinaryString(sourceFile, 'utf-8');
+
+//var fs = require('fs');
+//var fileName = "safaitic.db";
+
+//var table = fs.readFileSync('safaitic.db', 'utf-8');
+//console.log(file)
+
+//var lines = file.split("\r\n");
+
+var Entry = function(lexeme, pos, gloss, phonetics, root, note, date) {
+	this.lx = lexeme;
+	this.ps = pos;
+	this.ge = gloss;
+	this.ph = phonetics;
+	this.root = root;
+	this.nt = note;
+	this.dt = date;
+};
+
+var parseLines = function (lines) {
+	for (var i = 0; i < lines.length; i++) {
+		if (lines[i].substring(0,4) == "\\lx ") {
+			var lexeme = lines[i].substring(4);
+			var word = new Entry();
+			word.lx = lexeme;
+			database.push(word);
+		}
+		if (lines[i].substring(0,4) == "\\ps ") {
+			var pos = lines[i].substring(4);
+			word.ps = pos;
+		}
+		if (lines[i].substring(0,4) == "\\ge ") {
+			var gloss = lines[i].substring(4);
+			word.ge = gloss;
+		}
+		if (lines[i].substring(0,6) == "\\root ") {
+			var root = lines[i].substring(6);
+			word.root = root;
+		}
+		if (lines[i].substring(0,4) == "\\ph ") {
+			var phone = lines[i].substring(4);
+			word.ph = phone;
+		}
+		if (lines[i].substring(0,4) == "\\nt ") {
+			var note = lines[i].substring(4);
+			word.nt = note;
+		}
+		if (lines[i].substring(0,4) == "\\dt ") {
+			var date = lines[i].substring(4);
+			word.dt = date;
+		}
+	}
+};
+
+var format = function(type) {
+	return function (input) {
+		return "<div class=\"" + type + "\">" + input + "</div>";
+	}
+};
+
+var formatLx = format("lexeme");
+var formatPs = format("pos");
+var formatGe = format("gloss");
+
+
+parseLines(lines);
+//console.log(database[0].nt == undefined) undefined is not the same as false!
+
+var formatDatabase = function (database) {
+	for (var i = 0; i < database.length; i++) {
+		var lx = formatLx(database[i].lx);
+		var ps = formatPs(database[i].ps);
+		var ge = formatGe(database[i].ge);
+		//return [lx, ps, ge]
+		document.write(lx);
+		document.write(ps);
+		document.write(ge);
+	}
+
+};
+
+formatDatabase(database);
+//console.log(formatDatabase(database));
+
+var formatPs = function(input) {};
+var formatGe = function(input) {};
+var formatRoot = function(input) {};
+
+
+</script>
+
+<div id="myDiv"><h2>Let AJAX change this text</h2></div>
+<button type="button" onclick="loadXMLDoc()">Change content</button>
+
+
+</body>
+</html>
